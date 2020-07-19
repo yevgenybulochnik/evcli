@@ -3,9 +3,9 @@ package core
 import (
 	"encoding/xml"
 	"fmt"
+	"net"
 	"os"
-    "net"
-    "strconv"
+	"strconv"
 
 	"github.com/jedib0t/go-pretty/v6/table"
 	libvirt "libvirt.org/libvirt-go"
@@ -57,12 +57,12 @@ type Network struct {
 	Forward struct {
 		Mode string `xml:"mode,attr"`
 	} `xml:"forward"`
-    Ip struct {
-        Dhcp string `xml:"dhcp"`
-        Address string `xml:"address,attr"`
-        Prefix string `xml:"prefix,attr"`
-        Mask string `xml:"netmask,attr"`
-    } `xml:"ip"`
+	Ip struct {
+		Dhcp    string `xml:"dhcp"`
+		Address string `xml:"address,attr"`
+		Prefix  string `xml:"prefix,attr"`
+		Mask    string `xml:"netmask,attr"`
+	} `xml:"ip"`
 }
 
 func ListNetworks() {
@@ -81,22 +81,22 @@ func ListNetworks() {
 		networkXml, _ := network.GetXMLDesc(0)
 		var n Network
 		xml.Unmarshal([]byte(networkXml), &n)
-        var cidr string
+		var cidr string
 
-        if n.Ip.Prefix != "" {
-            _, ipNet, _ := net.ParseCIDR(n.Ip.Address + "/" + n.Ip.Prefix)
-            cidr = ipNet.String()
-        } else {
-            intMask, _ := net.IPMask(net.ParseIP(n.Ip.Mask).To4()).Size()
-            _, ipNet, _ := net.ParseCIDR(n.Ip.Address + "/" + strconv.Itoa(intMask))
-            cidr = ipNet.String()
-        }
+		if n.Ip.Prefix != "" {
+			_, ipNet, _ := net.ParseCIDR(n.Ip.Address + "/" + n.Ip.Prefix)
+			cidr = ipNet.String()
+		} else {
+			intMask, _ := net.IPMask(net.ParseIP(n.Ip.Mask).To4()).Size()
+			_, ipNet, _ := net.ParseCIDR(n.Ip.Address + "/" + strconv.Itoa(intMask))
+			cidr = ipNet.String()
+		}
 
-        if n.Ip.Dhcp !="" {
-            networksTable.AppendRow(row{n.Name, n.Forward.Mode, "true", cidr})
-        } else {
-            networksTable.AppendRow(row{n.Name, n.Forward.Mode, "false", cidr})
-        }
+		if n.Ip.Dhcp != "" {
+			networksTable.AppendRow(row{n.Name, n.Forward.Mode, "true", cidr})
+		} else {
+			networksTable.AppendRow(row{n.Name, n.Forward.Mode, "false", cidr})
+		}
 	}
 
 	networksTable.Render()
