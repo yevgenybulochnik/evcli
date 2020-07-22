@@ -67,3 +67,24 @@ func ListNetworks() {
 
 	networksTable.Render()
 }
+
+func ListDomains() {
+	conn := Connect()
+
+	domainsTable := CreateTableWriter(
+		Header{"Name"},
+	)
+
+	domains, _ := conn.ListAllDomains(libvirt.CONNECT_LIST_DOMAINS_ACTIVE)
+	for _, domain := range domains {
+		domainXml, _ := domain.GetXMLDesc(0)
+		d := &libvirtxml.Domain{}
+		d.Unmarshal(domainXml)
+
+		domainsTable.AppendRow(
+			Row{d.Name},
+		)
+	}
+
+	domainsTable.Render()
+}
