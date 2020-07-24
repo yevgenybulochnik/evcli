@@ -5,7 +5,8 @@ import (
 	"net"
 	"strconv"
 
-	"libvirt.org/libvirt-go"
+	"github.com/jedib0t/go-pretty/v6/table"
+	"github.com/jedib0t/go-pretty/v6/text"
 	"libvirt.org/libvirt-go-xml"
 )
 
@@ -16,7 +17,7 @@ func ListPools() {
 		Header{"Pool", "Path"},
 	)
 
-	pools, err := conn.ListAllStoragePools(libvirt.CONNECT_LIST_STORAGE_POOLS_ACTIVE)
+	pools, err := conn.ListAllStoragePools(0)
 	if err != nil {
 		fmt.Print(err)
 	}
@@ -72,17 +73,31 @@ func ListDomains() {
 	conn := Connect()
 
 	domainsTable := CreateTableWriter(
-		Header{"Name"},
+		Header{"Name", "Status", "IPS", "Source"},
 	)
+    domainsTable.SetColumnConfigs([]table.ColumnConfig{
+        {Name: "Status", Align: text.AlignCenter},
+    })
 
-	domains, _ := conn.ListAllDomains(libvirt.CONNECT_LIST_DOMAINS_ACTIVE)
+	domains, _ := conn.ListAllDomains(0)
 	for _, domain := range domains {
 		domainXml, _ := domain.GetXMLDesc(0)
 		d := &libvirtxml.Domain{}
 		d.Unmarshal(domainXml)
 
+        var currentState string
+
+        switch status, _, _ := domain.GetState(); status {
+            case 1:
+                currentState = "up"
+            case 5:
+                currentState = "down"
+            default:
+                currentState = ""
+        }
+
 		domainsTable.AppendRow(
-			Row{d.Name},
+			Row{d.Name, currentState},
 		)
 	}
 
