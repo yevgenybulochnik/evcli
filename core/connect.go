@@ -10,7 +10,7 @@ func Connect() *libvirt.Connect {
     conn, err := libvirt.NewConnect("qemu:///system")
 
     if err != nil {
-        fmt.Println(err)
+        panic(err)
     }
 
     return conn

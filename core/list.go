@@ -19,7 +19,7 @@ func ListPools() {
 
 	pools, err := conn.ListAllStoragePools(0)
 	if err != nil {
-		fmt.Print(err)
+        panic(err)
 	}
 
 	for _, pool := range pools {
@@ -41,7 +41,7 @@ func ListNetworks() {
 
 	networks, err := conn.ListAllNetworks(0)
 	if err != nil {
-		fmt.Print(err)
+        panic(err)
 	}
 
 	for _, network := range networks {
