@@ -1,15 +1,13 @@
 package cmd
 
 import (
-    // "fmt"
-
-    "github.com/spf13/cobra"
+	"github.com/spf13/cobra"
 )
 
 var listCmd = &cobra.Command{
-    Use: "list",
+	Use: "list",
 }
 
 func init() {
-    rootCmd.AddCommand(listCmd)
+	rootCmd.AddCommand(listCmd)
 }

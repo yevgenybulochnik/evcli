@@ -1,17 +1,15 @@
 package core
 
 import (
-    "fmt"
-
-    libvirt "libvirt.org/libvirt-go"
+	libvirt "libvirt.org/libvirt-go"
 )
 
 func Connect() *libvirt.Connect {
-    conn, err := libvirt.NewConnect("qemu:///system")
+	conn, err := libvirt.NewConnect("qemu:///system")
 
-    if err != nil {
-        panic(err)
-    }
+	if err != nil {
+		panic(err)
+	}
 
-    return conn
+	return conn
 }

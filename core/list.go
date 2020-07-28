@@ -1,7 +1,6 @@
 package core
 
 import (
-	"fmt"
 	"net"
 	"strconv"
 
@@ -19,7 +18,7 @@ func ListPools() {
 
 	pools, err := conn.ListAllStoragePools(0)
 	if err != nil {
-        panic(err)
+		panic(err)
 	}
 
 	for _, pool := range pools {
@@ -41,7 +40,7 @@ func ListNetworks() {
 
 	networks, err := conn.ListAllNetworks(0)
 	if err != nil {
-        panic(err)
+		panic(err)
 	}
 
 	for _, network := range networks {
@@ -75,9 +74,9 @@ func ListDomains() {
 	domainsTable := CreateTableWriter(
 		Header{"Name", "Status", "IPS", "Source"},
 	)
-    domainsTable.SetColumnConfigs([]table.ColumnConfig{
-        {Name: "Status", Align: text.AlignCenter},
-    })
+	domainsTable.SetColumnConfigs([]table.ColumnConfig{
+		{Name: "Status", Align: text.AlignCenter},
+	})
 
 	domains, _ := conn.ListAllDomains(0)
 	for _, domain := range domains {
@@ -85,16 +84,16 @@ func ListDomains() {
 		d := &libvirtxml.Domain{}
 		d.Unmarshal(domainXml)
 
-        var currentState string
+		var currentState string
 
-        switch status, _, _ := domain.GetState(); status {
-            case 1:
-                currentState = "up"
-            case 5:
-                currentState = "down"
-            default:
-                currentState = ""
-        }
+		switch status, _, _ := domain.GetState(); status {
+		case 1:
+			currentState = "up"
+		case 5:
+			currentState = "down"
+		default:
+			currentState = ""
+		}
 
 		domainsTable.AppendRow(
 			Row{d.Name, currentState},
