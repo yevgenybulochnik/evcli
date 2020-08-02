@@ -6,7 +6,7 @@ import (
 )
 
 func CreateVm() {
-	conn := Connect()
+    conn := Connect()
 
 	domcfg := &libvirtxml.Domain{
 		Type: "kvm",
@@ -70,6 +70,18 @@ func CreateVm() {
 					},
 				},
 			},
+            Interfaces: []libvirtxml.DomainInterface{
+                {
+                    Source: &libvirtxml.DomainInterfaceSource{
+                        Network: &libvirtxml.DomainInterfaceSourceNetwork{
+                            Network: "default",
+                        },
+                    },
+                    Model: &libvirtxml.DomainInterfaceModel{
+                        Type: "virtio",
+                    },
+                },
+            },
 		},
 	}
 
@@ -78,12 +90,13 @@ func CreateVm() {
 		panic(err)
 	}
 
-	fmt.Println(xml)
+    dom, err := conn.DomainDefineXML(xml)
+    if err != nil {
+        panic(err)
+    }
 
-	dom, err := conn.DomainDefineXML(xml)
-	if err != nil {
-		panic(err)
-	}
+    dom.Create()
 
-	fmt.Println(dom.GetName())
+    fmt.Println(dom.GetXMLDesc(0))
+
 }

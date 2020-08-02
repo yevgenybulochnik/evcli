@@ -76,6 +76,7 @@ func ListDomains() {
 	)
 	domainsTable.SetColumnConfigs([]table.ColumnConfig{
 		{Name: "Status", Align: text.AlignCenter},
+		{Name: "IPS", Align: text.AlignCenter, AlignHeader: text.AlignCenter},
 	})
 
 	domains, _ := conn.ListAllDomains(0)
@@ -95,8 +96,18 @@ func ListDomains() {
 			currentState = ""
 		}
 
+        interfaces, _ := domain.ListAllInterfaceAddresses(0)
+
+        var ip string
+
+        if len(interfaces) > 0 {
+            ip = interfaces[0].Addrs[0].Addr
+        } else {
+            ip = ""
+        }
+
 		domainsTable.AppendRow(
-			Row{d.Name, currentState},
+			Row{d.Name, currentState, ip},
 		)
 	}
 
