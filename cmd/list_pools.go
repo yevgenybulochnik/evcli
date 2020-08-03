@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"github.com/jedib0t/go-pretty/v6/table"
+	"github.com/jedib0t/go-pretty/v6/text"
 	"github.com/spf13/cobra"
 	"github.com/yevgenybulochnik/evcli/core"
 	"libvirt.org/libvirt-go-xml"
@@ -21,6 +23,9 @@ func listPools() {
 	poolsTable := CreateTableWriter(
 		Header{"Pool", "Path"},
 	)
+	poolsTable.SetColumnConfigs([]table.ColumnConfig{
+		{Name: "Path", AlignHeader: text.AlignCenter},
+	})
 
 	pools, err := conn.ListAllStoragePools(0)
 	if err != nil {
