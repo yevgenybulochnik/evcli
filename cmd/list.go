@@ -5,9 +5,14 @@ import (
 )
 
 var listCmd = &cobra.Command{
-	Use: "list",
+	Use:   "list",
+	Short: "List various libvirt resources",
+	Long:  `List libvirt resources including storage pools, networks and virtual machines`,
 }
 
 func init() {
 	rootCmd.AddCommand(listCmd)
+	listCmd.AddCommand(listPoolsCmd)
+	listCmd.AddCommand(listNetworksCmd)
+	listCmd.AddCommand(listVmsCmd)
 }
