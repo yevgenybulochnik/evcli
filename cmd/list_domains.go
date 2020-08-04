@@ -62,3 +62,7 @@ func listVms() {
 
 	domainsTable.Render()
 }
+
+func init() {
+    listCmd.AddCommand(listVmsCmd)
+}

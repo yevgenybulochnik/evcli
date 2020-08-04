@@ -12,7 +12,4 @@ var listCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(listCmd)
-	listCmd.AddCommand(listPoolsCmd)
-	listCmd.AddCommand(listNetworksCmd)
-	listCmd.AddCommand(listVmsCmd)
 }

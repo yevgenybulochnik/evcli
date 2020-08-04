@@ -41,3 +41,7 @@ func listPools() {
 
 	poolsTable.Render()
 }
+
+func init() {
+    listCmd.AddCommand(listPoolsCmd)
+}

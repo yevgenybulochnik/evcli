@@ -53,3 +53,7 @@ func listNetworks() {
 
 	networksTable.Render()
 }
+
+func init() {
+    listCmd.AddCommand(listNetworksCmd)
+}
