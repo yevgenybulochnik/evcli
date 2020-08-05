@@ -5,7 +5,6 @@ import (
 	"github.com/jedib0t/go-pretty/v6/text"
 	"github.com/spf13/cobra"
 	"github.com/yevgenybulochnik/evcli/core"
-	"libvirt.org/libvirt-go-xml"
 )
 
 var listPoolsCmd = &cobra.Command{
@@ -33,15 +32,13 @@ func listPools() {
 	}
 
 	for _, pool := range pools {
-		poolXml, _ := pool.GetXMLDesc(0)
-		p := &libvirtxml.StoragePool{}
-		p.Unmarshal(poolXml)
-		poolsTable.AppendRow(Row{p.Name, p.Target.Path})
+		name, path := core.GetPoolInfo(&pool)
+		poolsTable.AppendRow(Row{name, path})
 	}
 
 	poolsTable.Render()
 }
 
 func init() {
-    listCmd.AddCommand(listPoolsCmd)
+	listCmd.AddCommand(listPoolsCmd)
 }
