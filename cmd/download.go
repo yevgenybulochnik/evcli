@@ -3,7 +3,6 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"sort"
 	"time"
 
 	"github.com/cavaliercoder/grab"
@@ -18,35 +17,20 @@ var downloadCmd = &cobra.Command{
 	Long:  `Download specific image given image name, (ex: ubuntu1804)`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			return errors.New("Please specify a single image name\n\n" + getAvailableImageNames())
+			return errors.New("Please specify a single image name\n\n" + core.GetAvailableImageNames())
 		}
 		if _, ok := core.ImageDict[args[0]]; !ok {
-			return errors.New("Image name not found\n\n" + getAvailableImageNames())
+			return errors.New("Image name not found\n\n" + core.GetAvailableImageNames())
 		}
 		return nil
+	},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		core.CheckOrCreateConfigDir()
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		pool_name, _ := cmd.Flags().GetString("pool")
 		downloadImage(args[0], pool_name)
 	},
-}
-
-func getAvailableImageNames() string {
-	var imgNames []string
-
-	availableImagesText := "Available Images:\n"
-
-	for imgKey := range core.ImageDict {
-		imgNames = append(imgNames, imgKey)
-	}
-
-	sort.Strings(imgNames)
-
-	for _, imgName := range imgNames {
-		availableImagesText += "\t" + imgName + "\n"
-	}
-
-	return availableImagesText
 }
 
 func downloadImage(imgName string, pool_name string) {
