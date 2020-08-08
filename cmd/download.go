@@ -29,6 +29,7 @@ var downloadCmd = &cobra.Command{
 	PreRun: func(cmd *cobra.Command, args []string) {
 		core.CheckOrCreateConfigDir()
         if core.ProfileExists(args[0]) {
+            fmt.Printf("Profile name %v already exists\n", args[0])
             os.Exit(0)
         }
 	},

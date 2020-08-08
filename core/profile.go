@@ -30,7 +30,6 @@ func ProfileExists(name string) bool {
     yaml.Unmarshal(file, &profileConfig)
 
     if _, found := profileConfig.Profiles[name]; found {
-        fmt.Printf("Profile name %v already exists\n", name)
         return true
     }
 
