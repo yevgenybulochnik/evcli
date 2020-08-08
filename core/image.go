@@ -32,3 +32,22 @@ func GetAvailableImageNames() string {
 
 	return availableImagesText
 }
+
+func GetImagePath(imageName string) string {
+	conn := Connect()
+
+	pools, _ := conn.ListAllStoragePools(0)
+
+	for _, pool := range pools {
+		volumes, _ := pool.ListAllStorageVolumes(0)
+		for _, volume := range volumes {
+			name, _ := volume.GetName()
+			if imageName == name {
+				imagePath, _ := volume.GetPath()
+				return imagePath
+			}
+		}
+	}
+
+	return ""
+}
