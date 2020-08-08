@@ -15,6 +15,7 @@ require (
 	gopkg.in/mattn/go-colorable.v0 v0.1.0 // indirect
 	gopkg.in/mattn/go-isatty.v0 v0.0.4 // indirect
 	gopkg.in/mattn/go-runewidth.v0 v0.0.4 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776
 	libvirt.org/libvirt-go v6.5.0+incompatible
 	libvirt.org/libvirt-go-xml v6.5.0+incompatible
 )
