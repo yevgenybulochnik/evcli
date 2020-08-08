@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"time"
+    "path/filepath"
+    "os"
 
 	"github.com/cavaliercoder/grab"
 	"github.com/cheggaaa/pb"
@@ -26,6 +28,9 @@ var downloadCmd = &cobra.Command{
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		core.CheckOrCreateConfigDir()
+        if core.ProfileExists(args[0]) {
+            os.Exit(0)
+        }
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		pool_name, _ := cmd.Flags().GetString("pool")
@@ -47,6 +52,8 @@ func downloadImage(imgName string, pool_name string) {
 
 	req, _ := grab.NewRequest(poolPath, core.ImageDict[imgName])
 
+    imageFileName := filepath.Base(core.ImageDict[imgName])
+
 	fmt.Printf("Downloading %v..\n", req.URL())
 	resp := client.Do(req)
 
@@ -62,9 +69,9 @@ func downloadImage(imgName string, pool_name string) {
 			bar.SetCurrent(resp.BytesComplete())
 		case <-resp.Done:
 			fmt.Println("Completed")
+            core.AddProfile(imgName, imageFileName)
 			return
 		}
-
 	}
 }
 
