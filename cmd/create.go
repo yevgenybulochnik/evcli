@@ -6,6 +6,8 @@ import (
 
 var createCmd = &cobra.Command{
 	Use: "create",
+    Short: "Create libvirt resource",
+    Long: "Create various libvirt resources including networks, pools and virtual machnines",
 }
 
 func init() {
