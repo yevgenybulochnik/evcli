@@ -5,16 +5,16 @@ import (
 	"io/ioutil"
 	"os"
 
-    "gopkg.in/yaml.v3"
+	"gopkg.in/yaml.v3"
 )
 
 type Ethernet struct {
-    Dhcp4 bool `yaml:"dhcp4"`
+	Dhcp4 bool `yaml:"dhcp4"`
 }
 
 type NetworkConfig struct {
-    Version int `yaml:"version"`
-    Ethernets map[string]Ethernet `yaml:"ethernets"`
+	Version   int                 `yaml:"version"`
+	Ethernets map[string]Ethernet `yaml:"ethernets"`
 }
 
 func (networkConfig *NetworkConfig) generateFile() *os.File {
