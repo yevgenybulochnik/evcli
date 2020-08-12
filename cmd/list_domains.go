@@ -64,5 +64,5 @@ func listVms() {
 }
 
 func init() {
-    listCmd.AddCommand(listVmsCmd)
+	listCmd.AddCommand(listVmsCmd)
 }

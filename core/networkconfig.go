@@ -2,8 +2,8 @@ package core
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
+	"path/filepath"
 
 	"gopkg.in/yaml.v3"
 )
@@ -17,14 +17,14 @@ type NetworkConfig struct {
 	Ethernets map[string]Ethernet `yaml:"ethernets"`
 }
 
-func (networkConfig *NetworkConfig) generateFile() *os.File {
+func (networkConfig *NetworkConfig) generateFile(tempDir string) *os.File {
 	var data bytes.Buffer
 
 	encoder := yaml.NewEncoder(&data)
 	encoder.SetIndent(2)
 	encoder.Encode(&networkConfig)
 
-	file, _ := ioutil.TempFile("", "network-config")
+	file, _ := os.Create(filepath.Join(tempDir, "network-config"))
 	file.Write(data.Bytes())
 	return file
 }

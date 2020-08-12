@@ -55,5 +55,5 @@ func listNetworks() {
 }
 
 func init() {
-    listCmd.AddCommand(listNetworksCmd)
+	listCmd.AddCommand(listNetworksCmd)
 }

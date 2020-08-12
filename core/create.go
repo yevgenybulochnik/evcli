@@ -2,15 +2,101 @@ package core
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
+	"os/exec"
+
 	"libvirt.org/libvirt-go-xml"
 )
 
-func CreateVm() {
-    conn := Connect()
+func CreateImage(vmName string, backingFilePath string, diskSize int, poolPath string) {
+
+	tempDir, _ := ioutil.TempDir("", "evcli-build")
+
+	metaData := MetaData{
+		InstanceId:    vmName,
+		LocalHostname: vmName,
+	}
+	metaDataFile := metaData.generateFile(tempDir)
+
+	cloudConfig := CloudConfig{
+		Hostname:         vmName,
+		PreserveHostname: false,
+		Users: []User{
+			{
+				Name:       "yevgeny",
+				Shell:      "/bin/bash",
+				Groups:     "sudo",
+				LockPasswd: false,
+				Passwd:     "$6$1V4l1w/9D8/.Jv$vfCnT6fAQ2yfJ5GBfGVF4AsRMmdDzv2L/catZpFLLoqlIPr2DsOr.uNG7lqSxlWUPfmNHliD9t0A3f5i.etn60",
+			},
+		},
+	}
+
+	cloudConfigFile := cloudConfig.generateFile(tempDir)
+
+	networkConfig := NetworkConfig{
+		Version: 2,
+		Ethernets: map[string]Ethernet{
+			"enp0s2": {Dhcp4: true},
+		},
+	}
+
+	networkConfigFile := networkConfig.generateFile(tempDir)
+
+	fmt.Println(networkConfigFile.Name())
+
+	qemuImgPath, _ := exec.LookPath("qemu-img")
+
+	qemuImgCmd := &exec.Cmd{
+		Path: qemuImgPath,
+		Args: []string{
+			qemuImgPath,
+			"create",
+			"-f",
+			"qcow2",
+			"-o",
+			fmt.Sprintf("backing_file=%v", backingFilePath),
+			fmt.Sprintf("%s/%s.img", poolPath, vmName),
+			fmt.Sprintf("%vG", diskSize),
+		},
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+	}
+
+	genIsoImgPath, _ := exec.LookPath("genisoimage")
+
+	genIsoImgCmd := &exec.Cmd{
+		Path: genIsoImgPath,
+		Args: []string{
+			genIsoImgPath,
+			"-output",
+			fmt.Sprintf("%s/%s.iso", poolPath, vmName),
+			"-volid",
+			"cidata",
+			"-joliet",
+			"-rock",
+			cloudConfigFile.Name(),
+			metaDataFile.Name(),
+			networkConfigFile.Name(),
+		},
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+	}
+
+	fmt.Println(qemuImgCmd.String())
+	fmt.Println(genIsoImgCmd.String())
+	qemuImgCmd.Run()
+	genIsoImgCmd.Run()
+	os.RemoveAll(tempDir)
+}
+
+func CreateVm(vmName string, poolPath string) {
+	conn := Connect()
 
 	domcfg := &libvirtxml.Domain{
 		Type: "kvm",
-		Name: "testvm",
+		Name: vmName,
 		Memory: &libvirtxml.DomainMemory{
 			Value: 4096,
 			Unit:  "MB",
@@ -34,7 +120,7 @@ func CreateVm() {
 					},
 					Source: &libvirtxml.DomainDiskSource{
 						File: &libvirtxml.DomainDiskSourceFile{
-							File: "/home/yevgeny/workspace/evcli/testvm/testvm.img",
+							File: fmt.Sprintf("%s/%s.img", poolPath, vmName),
 						},
 					},
 					Target: &libvirtxml.DomainDiskTarget{
@@ -49,7 +135,7 @@ func CreateVm() {
 					},
 					Source: &libvirtxml.DomainDiskSource{
 						File: &libvirtxml.DomainDiskSourceFile{
-							File: "/home/yevgeny/workspace/evcli/testvm/testvm.iso",
+							File: fmt.Sprintf("%s/%s.iso", poolPath, vmName),
 						},
 					},
 					Target: &libvirtxml.DomainDiskTarget{
@@ -70,18 +156,18 @@ func CreateVm() {
 					},
 				},
 			},
-            Interfaces: []libvirtxml.DomainInterface{
-                {
-                    Source: &libvirtxml.DomainInterfaceSource{
-                        Network: &libvirtxml.DomainInterfaceSourceNetwork{
-                            Network: "default",
-                        },
-                    },
-                    Model: &libvirtxml.DomainInterfaceModel{
-                        Type: "virtio",
-                    },
-                },
-            },
+			Interfaces: []libvirtxml.DomainInterface{
+				{
+					Source: &libvirtxml.DomainInterfaceSource{
+						Network: &libvirtxml.DomainInterfaceSourceNetwork{
+							Network: "default",
+						},
+					},
+					Model: &libvirtxml.DomainInterfaceModel{
+						Type: "virtio",
+					},
+				},
+			},
 		},
 	}
 
@@ -90,13 +176,13 @@ func CreateVm() {
 		panic(err)
 	}
 
-    dom, err := conn.DomainDefineXML(xml)
-    if err != nil {
-        panic(err)
-    }
+	dom, err := conn.DomainDefineXML(xml)
+	if err != nil {
+		panic(err)
+	}
 
-    dom.Create()
+	dom.Create()
 
-    fmt.Println(dom.GetXMLDesc(0))
+	fmt.Println(dom.GetXMLDesc(0))
 
 }

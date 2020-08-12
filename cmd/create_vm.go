@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/yevgenybulochnik/evcli/core"
+	"gopkg.in/yaml.v3"
 )
 
 var createVmCmd = &cobra.Command{
@@ -25,8 +25,17 @@ var createVmCmd = &cobra.Command{
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		// core.CreateVm()
-		fmt.Println("test")
+		profilesFile, _ := core.GetProfilesFile()
+
+		var profileConfig core.ProfileConfig
+
+		yaml.Unmarshal(profilesFile, &profileConfig)
+		p, _ := cmd.Flags().GetString("profile")
+		profile := profileConfig.Profiles[p]
+		backingImage := profile.GetImagePath()
+		core.CreateImage(args[0], backingImage, 20, "/home/yevgeny/vms")
+		core.CreateVm(args[0], "/home/yevgeny/vms")
+
 	},
 }
 
