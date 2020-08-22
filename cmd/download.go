@@ -28,7 +28,9 @@ var downloadCmd = &cobra.Command{
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {
 		core.CheckOrCreateConfigDir()
-		if core.ProfileExists(args[0]) {
+		profiles, _ := core.GetGlobalProfiles()
+
+		if profiles.ProfileExists(args[0]) {
 			fmt.Printf("Profile name %v already exists\n", args[0])
 			os.Exit(0)
 		}
@@ -70,7 +72,10 @@ func downloadImage(imgName string, pool_name string) {
 			bar.SetCurrent(resp.BytesComplete())
 		case <-resp.Done:
 			fmt.Println("Completed")
-			core.AddProfile(imgName, imageFileName)
+			profiles, path := core.GetGlobalProfiles()
+
+			profiles.AddProfile(imgName, core.Profile{Image: imageFileName})
+			profiles.Save(path)
 			return
 		}
 	}

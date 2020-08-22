@@ -56,3 +56,10 @@ func GetProfilesFile() ([]byte, string) {
 	file, _ := ioutil.ReadFile(profiles_file)
 	return file, profiles_file
 }
+
+func GetGlobalProfiles() (ProfileConfig, string) {
+	profilesFile, path := GetProfilesFile()
+	var profiles ProfileConfig
+	profiles.Parse(profilesFile)
+	return profiles, path
+}

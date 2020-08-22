@@ -5,7 +5,6 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/yevgenybulochnik/evcli/core"
-	"gopkg.in/yaml.v3"
 )
 
 var createVmCmd = &cobra.Command{
@@ -17,25 +16,21 @@ var createVmCmd = &cobra.Command{
 			return errors.New("Please provide a vm name")
 		}
 		profile_flag, _ := cmd.Flags().GetString("profile")
+		profiles, _ := core.GetGlobalProfiles()
 
-		if !core.ProfileExists(profile_flag) {
+		if !profiles.ProfileExists(profile_flag) {
 			return errors.New("This profile does not exist")
 		}
 
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		profilesFile, _ := core.GetProfilesFile()
+		profile_flag, _ := cmd.Flags().GetString("profile")
+		profiles, _ := core.GetGlobalProfiles()
 
-		var profileConfig core.ProfileConfig
+		profile := profiles.GetProfile(profile_flag)
 
-		yaml.Unmarshal(profilesFile, &profileConfig)
-		p, _ := cmd.Flags().GetString("profile")
-		profile := profileConfig.Profiles[p]
-		backingImage := profile.GetImagePath()
-		core.CreateImage(args[0], backingImage, 20, "/home/yevgeny/vms")
-		core.CreateVm(args[0], "/home/yevgeny/vms")
-
+		profile.CreateVM(args[0], 20, "vms")
 	},
 }
 
