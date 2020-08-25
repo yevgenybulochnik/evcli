@@ -11,8 +11,8 @@ import (
 
 var deleteVmCmd = &cobra.Command{
 	Use:   "vm",
-	Short: "Create virtual machine",
-	Long:  "Create virtual machine based on profile",
+	Short: "Delete virtual machine",
+	Long:  "Delete virtual machine based on profile",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		deleteVm(args[0])
