@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -42,10 +43,16 @@ func deleteVm(vmName string) {
 	iso, _ := conn.LookupStorageVolByPath(isoPath)
 	vol, _ := conn.LookupStorageVolByPath(volPath)
 
-	dom.Destroy()
-	dom.Undefine()
-	iso.Delete(0)
-	vol.Delete(0)
+	accept := core.AskForConfirmation("Please confirm delete", 1)
+
+	if accept {
+		dom.Destroy()
+		dom.Undefine()
+		iso.Delete(0)
+		vol.Delete(0)
+	} else {
+		os.Exit(0)
+	}
 
 	if err != nil {
 		panic(err)

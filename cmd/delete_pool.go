@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"os"
+
 	"github.com/spf13/cobra"
 	"github.com/yevgenybulochnik/evcli/core"
 )
@@ -26,8 +28,13 @@ func deletePool(poolName string) {
 	for _, pool := range pools {
 		name, _ := core.GetPoolInfo(&pool)
 		if name == poolName {
-			pool.Delete(0)
-			pool.Undefine()
+			accept := core.AskForConfirmation("Please confirm delete", 1)
+			if accept {
+				pool.Delete(0)
+				pool.Undefine()
+			} else {
+				os.Exit(0)
+			}
 		}
 	}
 
