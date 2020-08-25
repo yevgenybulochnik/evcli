@@ -6,7 +6,7 @@ import (
 
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete libvirt resourcel",
+	Short: "Delete libvirt resource",
 	Long:  "Delete various libvirt resources including networks, pools and virtual machines",
 }
 
