@@ -15,10 +15,10 @@ var createVmCmd = &cobra.Command{
 		if len(args) != 1 {
 			return errors.New("Please provide a vm name")
 		}
-		profile_flag, _ := cmd.Flags().GetString("profile")
+		profileFlag, _ := cmd.Flags().GetString("profile")
 		profiles, _ := core.GetGlobalProfiles()
 
-		if !profiles.ProfileExists(profile_flag) {
+		if !profiles.ProfileExists(profileFlag) {
 			return errors.New("This profile does not exist")
 		}
 
