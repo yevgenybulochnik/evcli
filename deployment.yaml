@@ -1,0 +1,5 @@
+hosts:
+  vm1:
+    base: ubuntu1804
+  vm2:
+    base: centos8
