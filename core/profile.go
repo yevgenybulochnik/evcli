@@ -12,6 +12,7 @@ import (
 
 type Profile struct {
 	Image string `yaml:"image"`
+	Base  string `yaml:"base,omitempty"`
 }
 
 func (profile *Profile) GetImagePath() string {
