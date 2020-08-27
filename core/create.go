@@ -100,7 +100,7 @@ func CreateImage(vmName string, backingFilePath string, diskSize int, poolPath s
 	fmt.Println(genIsoImgCmd.String())
 	qemuImgCmd.Run()
 	genIsoImgCmd.Run()
-	// os.RemoveAll(tempDir)
+    os.RemoveAll(tempDir)
 }
 
 func CreateVm(vmName string, poolPath string) {
