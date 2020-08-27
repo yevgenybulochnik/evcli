@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	// "os/user"
 
 	"libvirt.org/libvirt-go-xml"
 )
@@ -19,18 +20,29 @@ func CreateImage(vmName string, backingFilePath string, diskSize int, poolPath s
 	}
 	metaDataFile := metaData.generateFile(tempDir)
 
+	// user, _ := user.Current()
+
 	cloudConfig := CloudConfig{
 		Hostname:         vmName,
 		PreserveHostname: false,
-		Users: []User{
-			{
-				Name:       "yevgeny",
-				Shell:      "/bin/bash",
-				Groups:     "sudo",
-				LockPasswd: false,
-				Passwd:     "$6$1V4l1w/9D8/.Jv$vfCnT6fAQ2yfJ5GBfGVF4AsRMmdDzv2L/catZpFLLoqlIPr2DsOr.uNG7lqSxlWUPfmNHliD9t0A3f5i.etn60",
-			},
+		SshAuthKeys: []string{
+			GetUserSshPublicKey(),
 		},
+		// Users: []User{
+		//     {
+		//         Name:   user.Username,
+		//         Shell:  "/bin/bash",
+		//         Groups: "sudo",
+		//         Sudo: []string{
+		//             "All=(ALL) NOPASSWD:ALL",
+		//         },
+		//         SshAuthKeys: []string{
+		//             GetUserSshPublicKey(),
+		//         },
+		//         LockPasswd: false,
+		//         Passwd:     "$6$1V4l1w/9D8/.Jv$vfCnT6fAQ2yfJ5GBfGVF4AsRMmdDzv2L/catZpFLLoqlIPr2DsOr.uNG7lqSxlWUPfmNHliD9t0A3f5i.etn60",
+		//     },
+		// },
 	}
 
 	cloudConfigFile := cloudConfig.generateFile(tempDir)
@@ -88,7 +100,7 @@ func CreateImage(vmName string, backingFilePath string, diskSize int, poolPath s
 	fmt.Println(genIsoImgCmd.String())
 	qemuImgCmd.Run()
 	genIsoImgCmd.Run()
-	os.RemoveAll(tempDir)
+	// os.RemoveAll(tempDir)
 }
 
 func CreateVm(vmName string, poolPath string) {
