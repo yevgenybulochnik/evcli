@@ -63,3 +63,10 @@ func GetGlobalProfiles() (ProfileConfig, string) {
 	profiles.Parse(profilesFile)
 	return profiles, path
 }
+
+func GetUserSshPublicKey() string {
+	userHome, _ := os.UserHomeDir()
+	sshDir := filepath.Join(userHome, ".ssh", "id_rsa.pub")
+	pubKey, _ := ioutil.ReadFile(sshDir)
+	return string(pubKey)
+}
