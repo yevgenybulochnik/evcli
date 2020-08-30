@@ -7,6 +7,7 @@ Go command line utility to manage libvirt resources.
 Please make sure `LIBVIRT_DEFAULT_URI` env var is set to `qemu:///system`. Also for ubuntu install `libvirt-bin`, `libvirt-dev`, `qemu-kvm`. 
 In order to run commands one can either build the binary for this project with `go build .` at the project root. Or you can execute the commands with `go run . <your command>`. Executing `go run .` at the project root, for example, will give you the cli help message. Get further help by typing in specific commands, ie `go run . download`.
 1. Generate 2 storage pools, one for images and one for vms. I typically do this in my home directory
+    - Create an images and vms dir at `~`
     - Execute `evcli create pool images -p /home/<your-username>/images `
     - Execute `evcli create pool vms -p /home/<your-username>`
 2. Download a cloud image, currently only ubuntu and centos images are available.
