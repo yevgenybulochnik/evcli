@@ -1,11 +1,12 @@
 package cmd
 
 import (
+	"net"
+	"strconv"
+
 	"github.com/spf13/cobra"
 	"github.com/yevgenybulochnik/evcli/core"
 	"libvirt.org/libvirt-go-xml"
-	"net"
-	"strconv"
 )
 
 var listNetworksCmd = &cobra.Command{
