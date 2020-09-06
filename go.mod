@@ -3,6 +3,7 @@ module github.com/yevgenybulochnik/evcli
 go 1.14
 
 require (
+	github.com/apparentlymart/go-cidr v1.1.0
 	github.com/cavaliercoder/grab v2.0.0+incompatible
 	github.com/cheggaaa/pb v2.0.7+incompatible
 	github.com/jedib0t/go-pretty/v6 v6.0.4
