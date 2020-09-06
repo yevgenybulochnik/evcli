@@ -3,10 +3,12 @@ package core
 import (
 	"fmt"
 	"io/ioutil"
+	"net"
 	"os"
 	"os/exec"
 	// "os/user"
 
+	"github.com/apparentlymart/go-cidr/cidr"
 	"libvirt.org/libvirt-go-xml"
 )
 
@@ -197,4 +199,50 @@ func CreateVm(vmName string, poolPath string) {
 
 	fmt.Println(dom.GetXMLDesc(0))
 
+}
+
+func CreateNetwork(netName string, cidrString string) {
+	conn := Connect()
+	_, ipNet, _ := net.ParseCIDR(cidrString)
+	count := cidr.AddressCount(ipNet)
+	if count <= 4 {
+		panic("Error calculating DHCP range")
+	}
+	firstIp, lastIp := cidr.AddressRange(ipNet)
+	netcfg := &libvirtxml.Network{
+		Name: netName,
+		Forward: &libvirtxml.NetworkForward{
+			Mode: "nat",
+		},
+		Bridge: &libvirtxml.NetworkBridge{
+			Name:  netName,
+			STP:   "on",
+			Delay: "0",
+		},
+		IPs: []libvirtxml.NetworkIP{
+			{
+				Address: cidr.Inc(firstIp).String(),
+				Netmask: ipv4MaskString(ipNet.Mask),
+				DHCP: &libvirtxml.NetworkDHCP{
+					Ranges: []libvirtxml.NetworkDHCPRange{
+						{
+							Start: cidr.Inc(cidr.Inc(firstIp)).String(),
+							End:   cidr.Dec(lastIp).String(),
+						},
+					},
+				},
+			},
+		},
+	}
+
+	xml, _ := netcfg.Marshal()
+
+	net, err := conn.NetworkDefineXML(xml)
+	if err != nil {
+		panic(err)
+	}
+	net.Create()
+	net.SetAutostart(true)
+
+	fmt.Printf("Network %v created\n", netName)
 }
