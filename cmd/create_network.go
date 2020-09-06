@@ -70,8 +70,7 @@ func createNetwork(netName string, cidrString string) {
 	net.Create()
 	net.SetAutostart(true)
 
-	fmt.Println(netcfg.Marshal())
-	fmt.Println(cidr.AddressRange(ipNet))
+	fmt.Printf("Network %v created\n", netName)
 }
 
 func ipv4MaskString(m []byte) string {
