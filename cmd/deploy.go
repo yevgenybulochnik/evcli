@@ -23,7 +23,11 @@ func deploy() {
 	path, _ := os.Getwd()
 	deploymentFile := filepath.Join(path, "deployment.yaml")
 
-	data, _ := ioutil.ReadFile(deploymentFile)
+	data, err := ioutil.ReadFile(deploymentFile)
+    if err != nil {
+        fmt.Println("No deployment.yml file found")
+        os.Exit(0)
+    }
 	fmt.Println(deploymentFile)
 	fmt.Println(data)
 
@@ -35,7 +39,8 @@ func deploy() {
 
 	for name, host := range deployment.Hosts {
 		if profile, exists := globalProfiles.List[host.Base]; exists {
-			profile.CreateVM(name, 10, "vms")
+            profile.CreateVM(name, 10, "vms")
+            fmt.Println(profile, name)
 		}
 	}
 }
